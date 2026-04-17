@@ -16,6 +16,68 @@
           {
             "group": "Getting Started",
             "pages": [
+              "verdent-manager/getting-started/overview",
+              "verdent-manager/getting-started/installation",
+              "verdent-manager/getting-started/quick-start",
+              "verdent-manager/getting-started/supported-operating-systems"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "verdent-manager/core-features/manager",
+              "verdent-manager/core-features/pulse",
+              "verdent-manager/core-features/automation",
+              "verdent-manager/core-features/instant-messaging",
+              "verdent-manager/core-features/integration",
+              "verdent-manager/core-features/skills"
+            ]
+          },
+          {
+            "group": "Advanced Features",
+            "pages": [
+              "verdent-manager/advanced-features/agent-mode",
+              "verdent-manager/advanced-features/plan-mode",
+              "verdent-manager/advanced-features/smart-suggestion",
+              "verdent-manager/advanced-features/code-review",
+              "verdent-manager/advanced-features/workspace-isolation"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "verdent-manager/configuration/byoa",
+              "verdent-manager/configuration/byok",
+              "verdent-manager/configuration/subagents",
+              "verdent-manager/configuration/rules",
+              "verdent-manager/configuration/mcp",
+              "verdent-manager/configuration/configuration-optimization"
+            ]
+          },
+          {
+            "group": "Pricing",
+            "pages": [
+              "verdent-manager/pricing/view-plans",
+              "account-billing/model-pricing"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "verdent-manager/reference/version-history",
+              "verdent-manager/reference/security-compliance",
+              "verdent-manager/reference/support-resources"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Verdent 1.0",
+        "hidden": true,
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
               "verdent/getting-started/overview",
               "verdent/getting-started/core-concepts",
               "verdent/getting-started/system-requirements",
@@ -29,13 +91,14 @@
             "group": "Core Features",
             "pages": [
               "verdent/core-features/overview",
-              "verdent/core-features/parallel-execution",
-              "verdent/core-features/workspace-isolation",
-              "verdent/core-features/multitasking",
-              "verdent/core-features/project-switching",
+              "verdent/core-features/agent-mode",
               "verdent/core-features/plan-mode",
               "verdent/core-features/code-review",
+              "verdent/core-features/multitasking",
+              "verdent/core-features/workspace-isolation",
               "verdent/core-features/context-awareness",
+              "verdent/core-features/agents",
+              "verdent/core-features/project-switching",
               "verdent/core-features/mcp-integration"
             ]
           },
@@ -60,7 +123,8 @@
           {
             "group": "Pricing",
             "pages": [
-              "verdent/pricing/overview"
+              "verdent/pricing/overview",
+              "account-billing/model-pricing"
             ]
           },
           {
@@ -85,14 +149,15 @@
             "group": "Best Practices",
             "pages": [
               "verdent/best-practices/prompts",
-              "verdent/best-practices/context"
+              "verdent/best-practices/context",
+              "verdent/best-practices/plan-workflows"
             ]
           },
           {
             "group": "Configuration",
             "pages": [
               "verdent/configuration/settings",
-              "verdent/configuration/plan-workflows",
+              "verdent/configuration/byok",
               "verdent/configuration/tuning"
             ]
           },
@@ -108,8 +173,7 @@
             "pages": [
               "verdent/advanced-features/overview",
               "verdent/advanced-features/tool-reference",
-              "verdent/advanced-features/integrations",
-              "verdent/advanced-features/extensibility"
+              "verdent/advanced-features/integrations"
             ]
           },
           {
@@ -181,7 +245,8 @@
           {
             "group": "Pricing",
             "pages": [
-              "verdent-for-vscode/pricing/overview"
+              "verdent-for-vscode/pricing/overview",
+              "account-billing/model-pricing"
             ]
           },
           {
@@ -230,6 +295,7 @@
               "verdent-for-vscode/advanced-features/overview",
               "verdent-for-vscode/advanced-features/tool-reference",
               "verdent-for-vscode/advanced-features/integrations",
+              "verdent-for-vscode/advanced-features/mcp",
               "verdent-for-vscode/advanced-features/extensibility"
             ]
           },
@@ -253,13 +319,40 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Account & Billing",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "account-billing/overview"
+            ]
+          },
+          {
+            "group": "Credits",
+            "pages": [
+              "account-billing/credits-and-plans",
+              "account-billing/model-pricing",
+              "account-billing/run-out-of-credits",
+              "account-billing/eco-mode"
+            ]
+          },
+          {
+            "group": "Subscriptions",
+            "pages": [
+              "account-billing/billing-cycle-and-rollover",
+              "account-billing/subscription-streak"
+            ]
+          }
+        ]
       }
     ],
     "global": {
       "anchors": [
         {
           "anchor": "Website",
-          "href": "https://verdent.ai?ots=verdentdoc",
+          "href": "https://verdent.ai",
           "icon": "globe"
         },
         {
@@ -284,7 +377,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://verdent.ai/dashboard?ots=verdentdoc"
+      "href": "https://verdent.ai/dashboard"
     }
   },
   "contextual": {
@@ -305,5 +398,19 @@
       "github": "https://github.com/verdent",
       "linkedin": "https://linkedin.com/company/verdent"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/verdent-manager/getting-started/overview"
+    },
+    {
+      "source": "/verdent/pricing/subscription-streak",
+      "destination": "/account-billing/subscription-streak"
+    },
+    {
+      "source": "/verdent-for-vscode/pricing/subscription-streak",
+      "destination": "/account-billing/subscription-streak"
+    }
+  ]
 }

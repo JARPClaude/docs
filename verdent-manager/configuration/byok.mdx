@@ -1,0 +1,77 @@
+---
+title: Bring Your Own Key (BYOK)
+description: "Use your own provider API keys in Verdent Desktop and understand where BYOK models are available"
+---
+
+## Overview
+
+BYOK (Bring Your Own Key) lets you connect your own provider API keys and use those models directly inside Verdent's built-in agents.
+
+### BYOK vs BYOA
+
+Verdent offers two "bring your own" paths—don't confuse them:
+
+| | BYOK | BYOA |
+|---|---|---|
+| **What you bring** | A provider API key | An Agent runtime (Codex / Claude Code) |
+| **What runs your task** | Verdent's built-in agent, using the provider behind your key | The external CLI agent on your machine |
+| **Typical use case** | Access a model under your own billing, or use a provider not bundled by default | Keep your existing Codex / Claude Code workflow while letting Manager dispatch Worker tasks to it |
+| **Configure at** | Settings → Models → Configure Models | Settings → Models → CLI Agents |
+
+See [BYOA](/verdent-manager/configuration/byoa) for running Worker tasks on an external Agent runtime.
+
+## Supported Providers
+
+- Anthropic
+- OpenAI
+- OpenRouter
+
+## Add an API Key
+
+<Steps>
+  <Step title="Open model configuration">
+    Go to **Settings → Models → Configure Models**.
+  </Step>
+  <Step title="Start adding a key">
+    Click **Add API Key +** in the top-right corner.
+  </Step>
+  <Step title="Choose provider and models">
+    Select a provider and choose the models you want to enable.
+  </Step>
+  <Step title="Enter credentials">
+    Add your API key.
+  </Step>
+  <Step title="Save and validate">
+    Click **Save**. Verdent validates the key automatically.
+  </Step>
+</Steps>
+
+### Validation Results
+
+- If validation succeeds, the key is saved and the selected models become available.
+- If validation fails, Verdent shows an error so you can update the key and try again.
+
+## Manage Existing API Keys
+
+Under **Settings → Models → Configure Models**, you can:
+
+- Enable or disable all models for a provider
+- Enable or disable individual models
+- Edit an existing API key
+- Delete an API key
+
+## Where BYOK Models Appear
+
+After you add a valid key, BYOK models appear in:
+
+- The chat model selector
+- Preset model configuration
+- Subagent settings
+- Reviewer settings
+
+BYOK models behave like built-in models once they are enabled.
+
+## Limitations
+
+- Built-in features such as Smart Suggestions do not support BYOK API keys.
+- Automatic compression does not support BYOK API keys.

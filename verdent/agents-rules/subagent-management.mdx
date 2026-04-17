@@ -1,145 +1,129 @@
 ---
-title: Subagent Management
-description: Understanding and managing subagents in Verdent
+title: Subagents
+description: Specialized expert agents the main agent can call on demand
 ---
 
-Subagents are specialized AI agents that operate with their own custom system prompt and isolated context window. They handle specific tasks delegated by the main agent without polluting the main conversation context.
-
-### What You'll Learn
-
-- Understanding default subagents
-- Creating custom subagents
-- Managing subagent configurations
-- Manual invocation with @-mentions
+A Subagent is a specialized "expert" that the main agent (Worker) can call on at any time during task execution. Each subagent has its own expertise, dedicated prompt, and can even run on a different model. In chat, simply type `@SubagentName` and it joins in to help—just like tagging a colleague in a group chat.
 
 ---
 
-## Key Characteristics
+## Built-in Subagents
 
-- **Isolated Context:** Each subagent maintains its own separate context window
-- **Custom System Prompts:** Every subagent has a dedicated system prompt defining its behavior
-- **Manual Invocation:** Users can explicitly reference subagents using @-mentions (e.g., `@verifier`)
+Verdent ships with 6 subagents out of the box, covering the most common needs in software development:
+
+| Name | Default Model | What it's good at |
+|------|---------------|-------------------|
+| **General** | Follows main Agent | A general-purpose research agent for complex problems, code search, and multi-step tasks—can help with almost anything |
+| **Fast Context** | Gemini 3 Flash | Quickly locating code and gathering contextual evidence; specializes in codebase indexing and is extremely fast |
+| **Verifier** | Sonnet 4.6 | Fast code review—after you make changes, tag it to catch obvious issues |
+| **Verdent Helper** | Haiku 4.5 | A Verdent usage assistant; ask it anything about how Verdent works |
+| **Multi-Model Planner** | Gemini 3.1 Pro; Opus 4.6; GPT-5.4 | Generates plans using multiple models (Claude, GPT, Gemini) and merges their outputs |
+| **Reviewer** | Gemini 3.1 Pro; Opus 4.6; GPT-5.4 | Full code review: logic errors, edge cases, hidden risks |
+
+<Note>
+Two subagents are special: **Multi-Model Planner** and **Reviewer** run 2–3 models in parallel. Each model thinks independently, produces its own output, and the results are then combined. All other subagents are single-model.
+</Note>
 
 ---
 
-## Default Subagents
+## How to Use Subagents
 
-Verdent includes a built-in subagent that is pre-configured and immediately available.
+In any conversation, type `@` to open the subagent selection menu (fuzzy search supported). Select the subagent you want and it will take over the current context.
 
-### @verifier
+**Examples:**
 
-**Specialization:** Quick code checks and validation
+- After writing complex authentication logic: `@Reviewer please review this` → Reviewer checks it from security, logic, and edge-case perspectives.
+- For a tricky architectural decision: `@Multi-Model Planner` → multiple models propose solutions and you pick the best one.
+- After coding, quickly run `@Verifier` → faster than running full test suites for basic validation.
 
-**Capabilities:**
-- Validates code logic
-- Checks syntax correctness
-- Verifies implementation against requirements
+---
 
-**Usage:**
+## Custom Subagents
+
+The built-in subagents cover most needs, but sometimes you want a specialist tailored to your project. You can create your own.
+
+### Where to store them
+
+Custom subagents are stored as Markdown files in:
+
 ```
-@verifier check this authentication logic
+~/.verdent/subagents/
 ```
 
-**Best For:** Rapid validation without full code review overhead
+Up to 5 levels of subdirectories are supported for organization.
 
-<Tip>
-@verifier can be configured to use a different model in Settings. Use a smaller, cheaper model for simple verification tasks.
-</Tip>
+### File format
+
+Each subagent is a Markdown file with YAML frontmatter:
+
+```markdown
+---
+name: SQL-Expert
+description: Specializes in SQL optimization and database design, good at analyzing slow queries and indexing strategies
+color: blue
+model: claude-sonnet-4-6
+---
+
+You are a senior database expert focused on PostgreSQL performance optimization.
+When users provide SQL queries, you should:
+1. Analyze the query execution plan
+2. Identify performance bottlenecks (full table scans, missing indexes, etc.)
+3. Provide concrete optimization suggestions and rewritten SQL
+...
+```
+
+### Key details
+
+- **Name:** must only include letters, numbers, and hyphens (e.g. `SQL-Expert`, `MyAgent123`). No spaces or non-ASCII characters.
+- **Color:** one of `dark-green`, `light-green`, `red-orange`, `amber`, `cyan`, `blue`, `pink`, `purple`, `verdent`—for easier visual recognition.
+- **Hot reload:** saving the `.md` file takes effect immediately—no need to restart Verdent.
 
 ---
 
-## Creating Custom Subagents
+## Managing Subagents in Settings
 
-Create specialized subagents tailored to your workflow.
-
-<Steps>
-  <Step title="Navigate to Settings">
-    Open Settings → Subagents
-  </Step>
-  <Step title="Add Subagent">
-    Click **Add Subagent**
-  </Step>
-  <Step title="Configure">
-    | Field | Description |
-    |-------|-------------|
-    | **Name** | Identifier for @-mention invocation |
-    | **Description** | Brief explanation of purpose |
-    | **Prompt** | Custom system instructions |
-    | **Model** | Sonnet 4.5, GPT-5, GPT-5-Codex, or Haiku 4.5 |
-  </Step>
-</Steps>
-
----
-
-## Managing Subagents
+All subagent management happens in **Settings → Subagents**.
 
 | Action | Description |
 |--------|-------------|
-| **Enable/Disable** | Toggle subagent availability |
-| **Duplicate** | Create a copy with existing settings |
-| **Edit** | Modify any configuration |
-| **Delete** | Remove the subagent |
+| **View list** | All subagents are shown as cards. Built-in ones are labeled "Built-in"; plugin-based ones show plugin names. |
+| **Enable / Disable** | Toggle each subagent on or off without affecting others. |
+| **Create new** | Click **Add Subagent** and fill in Identifier (unique name), Model, Description, and Prompt. |
+| **Edit** | Hover a card to edit. Built-in subagents allow only Model and Description changes. |
+| **Duplicate** | Copy any custom subagent (duplicates are disabled by default until enabled). |
+| **Delete** | Custom subagents can be removed (with confirmation). Built-in ones cannot be deleted. |
+
+### Model selection differences
+
+- **Multi-Model Planner** and **Reviewer** support multi-model selection (2–3 models at once).
+- Other subagents use single-model selection.
+- **General** has a special option: it can follow the main agent's model automatically, avoiding separate configuration maintenance.
 
 ---
 
-## Using Subagents
+## Use Cases
 
-### Manual Invocation
+**Code Review**
+After implementing complex logic, tag `@Reviewer`. It checks correctness, edge cases, and potential bugs—saving you from manual line-by-line inspection.
 
-Use @-mentions to explicitly invoke a subagent:
+**Multi-perspective Architecture Design**
+For major decisions (e.g. microservices adoption, database choice), use `@Multi-Model Planner` to get independent proposals from multiple top models and reduce decision risk.
 
-```
-@verifier check validation logic in middleware
-```
+**Fast Validation**
+After code changes, `@Verifier` quickly checks syntax, types, and basic issues—faster than full test suites, more reliable than no checks at all.
 
-**Benefits of Manual Invocation:**
-- **Precision:** Ensure exact subagent handles the task
-- **Control:** Choose specific subagent when multiple could apply
-- **Consistency:** Repeat tasks with same subagent for consistent results
+**Custom Domain Experts**
+Create subagents tailored to your project:
 
-### When to Use @verifier
-
-| Task Type | Example |
-|-----------|---------|
-| Quick validation | `@verifier check this logic` |
-| Syntax check | `@verifier validate this function` |
-| Implementation check | `@verifier verify this matches requirements` |
+- SQL optimization expert aware of your schema and query patterns
+- Frontend code standards guardian enforcing your ESLint and design system rules
+- Documentation assistant that adapts technical content into clear, reader-friendly writing
 
 ---
 
-## Subagent vs Main Agent
+## Notes
 
-| Aspect | Subagent | Main Agent |
-|--------|----------|------------|
-| **Context** | Isolated, focused | Full conversation context |
-| **Speed** | Faster for specific tasks | Better for complex analysis |
-| **Best for** | Validation, review | Investigation, implementation |
-
----
-
-## FAQs
-
-<Accordion title="When should I use a subagent instead of the main agent?">
-Use subagents for quick, focused tasks like validation or code review. Use the main agent for complex investigations requiring full context.
-</Accordion>
-
-<Accordion title="Do subagents share context with the main agent?">
-No. Subagents have isolated context windows. Only the final results are returned to the main agent.
-</Accordion>
-
-<Accordion title="Can I configure subagent models?">
-Yes. @verifier can be configured to use a different model in Settings for cost optimization.
-</Accordion>
-
----
-
-## See Also
-
-<CardGroup cols={2}>
-  <Card title="Debugging" icon="bug" href="/verdent/task-based-guides/debugging">
-    Using @verifier for debugging workflows
-  </Card>
-  <Card title="Settings" icon="gear" href="/verdent/configuration/settings">
-    Configure subagent models
-  </Card>
-</CardGroup>
+- Custom subagents must be configured with a valid model to be enabled. If you use BYOK and the key expires or the model is retired, the subagent will be disabled automatically.
+- Built-in subagent models can be changed, but the defaults are tuned—modifying them may reduce performance.
+- **Description matters:** it is injected into the main agent's context and influences when subagents are called. Better descriptions lead to smarter routing.
+- Subagents cannot call each other. They can only be invoked by the main agent (Worker)—no deeper nesting allowed.

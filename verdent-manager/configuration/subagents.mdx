@@ -1,0 +1,133 @@
+---
+title: Subagents
+description: "Specialized expert agents the main agent can call on demand"
+---
+
+A subagent is a specialized "expert" that the main agent (Worker) can call on at any time during task execution. Each subagent has its own expertise, dedicated prompt, and can even run on a different model. In chat, simply type `@SubagentName` and it joins in to help—just like tagging a colleague in a group chat.
+
+---
+
+## Built-in Subagents
+
+Verdent ships with 6 subagents out of the box, covering the most common needs in software development:
+
+| Name | Default Model | What it's good at |
+|------|---------------|-------------------|
+| **General** | Follows main agent | A general-purpose research agent for complex problems, code search, and multi-step tasks—can help with almost anything |
+| **Fast Context** | Gemini 3 Flash | Quickly locating code and gathering contextual evidence; specializes in codebase indexing and is extremely fast |
+| **Verifier** | Sonnet 4.6 | Fast code review—after you make changes, tag it to catch obvious issues |
+| **Verdent Helper** | Haiku 4.5 | A Verdent usage assistant; ask it anything about how Verdent works |
+| **Multi-Model Planner** | Gemini 3.1 Pro; Opus 4.6; GPT-5.4 | Generates plans using multiple models (Claude, GPT, Gemini) and merges their outputs |
+| **Reviewer** | Gemini 3.1 Pro; Opus 4.6; GPT-5.4 | Full code review: logic errors, edge cases, hidden risks |
+
+<Note>
+Two subagents are special: **Multi-Model Planner** and **Reviewer** run 2–3 models in parallel. Each model thinks independently, produces its own output, and the results are then combined. All other subagents are single-model.
+</Note>
+
+---
+
+## How to Use Subagents
+
+In any conversation, type `@` to open the subagent selection menu (fuzzy search supported). Select the subagent you want and it will take over the current context.
+
+**Examples:**
+
+- After writing complex authentication logic: `@Reviewer please review this` → Reviewer checks it from security, logic, and edge-case perspectives.
+- For a tricky architectural decision: `@Multi-Model Planner` → multiple models propose solutions and you pick the best one.
+- After coding, quickly run `@Verifier` → faster than running full test suites for basic validation.
+
+---
+
+## Custom Subagents
+
+The built-in subagents cover most needs, but sometimes you want a specialist tailored to your project. You can create your own.
+
+### Where to store them
+
+Custom subagents are stored as Markdown files in:
+
+```
+~/.verdent/subagents/
+```
+
+Up to 5 levels of subdirectories are supported for organization.
+
+### File format
+
+Each subagent is a Markdown file with YAML frontmatter:
+
+```markdown
+---
+name: SQL-Expert
+description: Specializes in SQL optimization and database design, good at analyzing slow queries and indexing strategies
+color: blue
+model: claude-sonnet-4-6
+---
+
+You are a senior database expert focused on PostgreSQL performance optimization.
+When users provide SQL queries, you should:
+1. Analyze the query execution plan
+2. Identify performance bottlenecks (full table scans, missing indexes, etc.)
+3. Provide concrete optimization suggestions and rewritten SQL
+...
+```
+
+### Key details
+
+- **Name:** must only include letters, numbers, and hyphens (e.g. `SQL-Expert`, `MyAgent123`). No spaces or non-ASCII characters.
+- **Color:** one of `dark-green`, `light-green`, `red-orange`, `amber`, `cyan`, `blue`, `pink`, `purple`, `verdent`—for easier visual recognition.
+- **Hot reload:** saving the `.md` file takes effect immediately—no need to restart Verdent.
+
+---
+
+## Managing Subagents in Settings
+
+All subagent management happens in **Settings → Subagents**.
+
+| Action | Description |
+|--------|-------------|
+| **View list** | All subagents are shown as cards. Built-in ones are labeled "Built-in"; plugin-based ones show plugin names. |
+| **Enable / Disable** | Toggle each subagent on or off without affecting others. |
+| **Create new** | Click **Add Subagent** and fill in Identifier (unique name), Model, Description, and Prompt. |
+| **Edit** | Hover a card to edit. Built-in subagents allow only Model and Description changes. |
+| **Duplicate** | Copy any custom subagent (duplicates are disabled by default until enabled). |
+| **Delete** | Custom subagents can be removed (with confirmation). Built-in ones cannot be deleted. |
+
+### Model selection differences
+
+- **Multi-Model Planner** and **Reviewer** support multi-model selection (2–3 models at once).
+- Other subagents use single-model selection.
+- **General** has a special option: it can follow the main agent's model automatically, avoiding separate configuration maintenance.
+
+---
+
+## Use Cases
+
+### Code review
+
+After implementing complex logic, tag `@Reviewer`. It checks correctness, edge cases, and potential bugs—saving you from manual line-by-line inspection.
+
+### Multi-perspective architecture design
+
+For major decisions (e.g. microservices adoption, database choice), use `@Multi-Model Planner` to get independent proposals from multiple top models and reduce decision risk.
+
+### Fast validation
+
+After code changes, `@Verifier` quickly checks syntax, types, and basic issues—faster than full test suites, more reliable than no checks at all.
+
+### Custom domain experts
+
+Create subagents tailored to your project:
+
+- SQL optimization expert aware of your schema and query patterns
+- Frontend code standards guardian enforcing your ESLint and design system rules
+- Documentation assistant that adapts technical content into clear, reader-friendly writing
+
+---
+
+## Notes
+
+- Custom subagents must be configured with a valid model to be enabled. If you use BYOK and the key expires or the model is retired, the subagent will be disabled automatically.
+- Built-in subagent models can be changed, but the defaults are tuned—modifying them may reduce performance.
+- **Description matters:** it is injected into the main agent's context and influences when subagents are called. Better descriptions lead to smarter routing.
+- Subagents cannot call each other. They can only be invoked by the main agent (Worker)—no deeper nesting allowed.

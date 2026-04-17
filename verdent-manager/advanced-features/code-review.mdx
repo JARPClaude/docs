@@ -1,0 +1,152 @@
+---
+title: Code Review
+description: "Review code changes with the built-in Reviewer subagent, multi-model review, and one-click fixes"
+---
+
+Verdent includes a built-in subagent called **Reviewer**, whose sole responsibility is to review your code. After you finish writing, just tag `@Reviewer` and it will scan your changes from multiple angles and output a structured list of issues sorted by severity. Click any item you want to fix and it will automatically apply the changes—no need to write comments or search documentation manually.
+
+---
+
+## How to Trigger Code Review
+
+The most direct way is to type `@Reviewer` in chat, just like mentioning a teammate in a group:
+
+```
+@Reviewer please review the authentication logic I just wrote
+```
+
+Reviewer automatically reads the current context and starts reviewing. You can also simply call `@Reviewer` without instructions—it will decide what to inspect on its own.
+
+In addition to manual triggering, the Agent can automatically invoke Reviewer as a final **VERIFY** step in the workflow. Once code is written, you don't need to worry about it—the system brings Reviewer in to validate the result.
+
+---
+
+## What the Review Output Looks Like
+
+After review, you'll see a structured list of **Findings**. Each item includes:
+
+- **Title** — a one-line description of the issue
+- **Detailed explanation** — why it's a problem and its potential impact
+- **File path + line number** — click to jump directly to the code
+- **Confidence score** — how certain Reviewer is (0–1)
+
+Issues are categorized into three severity levels:
+
+| Priority | Meaning | Typical examples |
+|----------|---------|------------------|
+| **P0** | Critical, must fix | Logic errors, SQL injection, privilege escalation |
+| **P1** | Important, should fix | Missing edge cases, potential performance issues |
+| **P2** | Suggestion | Code style, readability improvements |
+
+At the top, a summary like `P0: 1 / P1: 3 / P2: 5` gives an instant overview of severity distribution. At the end, an `overall_explanation` provides a high-level evaluation of the changes.
+
+---
+
+## One-Click Fix
+
+No need to manually edit each issue. Each Finding includes a checkbox:
+
+1. Select the issues you want to fix (supports select all)
+2. Click **Fix**
+3. Reviewer automatically applies the changes
+4. Status updates to **Fix done**
+
+In some cases, if Reviewer determines the changes are low-risk, it may automatically select all issues and trigger the fix without requiring confirmation.
+
+---
+
+## Multi-Model Collaborative Review
+
+One of Reviewer's most powerful features is **multi-model code review**—multiple AI models reviewing the same code in parallel, like having three engineers from different backgrounds independently evaluate your implementation.
+
+**How to enable it**
+
+Go to **Settings → Chat → Reviewer → enable "Multi-model review"**.
+
+**Model selection modes**
+
+| Mode | Description |
+|------|-------------|
+| **Default mode** | Verdent automatically selects the best model combination based on task complexity |
+| **User mode** | Manually choose 1–3 models (Claude, GPT, Gemini can be mixed) |
+
+You can select up to **3 models**. The first is the primary reviewer; the others are secondary reviewers. More models mean broader coverage but slower execution. For simple changes, a single model is usually enough.
+
+---
+
+## Review Rules (Custom Review Policies)
+
+Reviewer catches many common issues by default, but every team has its own standards. **Review Rules** let you define your engineering guidelines directly.
+
+**Where to configure**
+
+Settings → Chat → Reviewer → Review Rules editor (Monaco editor with Markdown support).
+
+**What you can define**
+
+- All SQL queries must use parameterized statements, no string concatenation
+- Async operations must include proper try/catch error handling
+- React components should use `memo` when props are stable
+- All public APIs must validate user permissions
+
+These rules are automatically injected into Reviewer's context and checked during every review. Updates take effect automatically after ~500ms—no manual saving required.
+
+---
+
+## Real-Time Workflow
+
+During review, you can observe Reviewer's **Working Tree Stream** in real time—showing which file it is reading and which logic it is analyzing. Expanding it reveals a full task tree. You can collapse it if you prefer a simpler view without affecting results.
+
+---
+
+## Use Cases
+
+### Final Quality Check
+
+After implementing complex logic, run `@Reviewer` to catch edge cases and subtle bugs you may have missed due to fatigue.
+
+### Pre-PR Validation
+
+Run a review before submitting a pull request. Fix all P0/P1 issues first to reduce back-and-forth and ease the review burden on teammates.
+
+### Security Auditing
+
+Add security-focused Review Rules (e.g. "all inputs must be XSS-sanitized") to ensure every change is automatically checked against security policies.
+
+### Enforcing Team Standards
+
+Encode ESLint rules, API design conventions, and naming standards into Review Rules so even new contributors follow team guidelines automatically.
+
+### Multi-perspective Architecture Decisions
+
+For major changes, enable multi-model review to get independent evaluations and uncover blind spots.
+
+### Learning Tool for Beginners
+
+Use Reviewer feedback as learning material—understanding why P0 issues matter teaches core engineering principles faster than reading documentation.
+
+---
+
+## Notes
+
+- **Single vs multi-model**: multi-model provides broader coverage but is slower and more expensive. For simple or urgent tasks, single model is usually sufficient.
+- **Free tier limitation**: free users in User mode can only select models from the Eco Mode pool; premium models require a subscription.
+- **Model deprecation**: if a selected model is retired, it will be disabled and must be replaced.
+- **Review Rules are global**: they apply across all projects. If a rule is project-specific, add a note or remove it after use.
+- **BYOK status**: if using your own API key, expired or insufficient balance will disable corresponding models and cause review failures until updated.
+
+---
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="Subagents" icon="robot" href="/verdent-manager/configuration/subagents">
+    Learn about built-in subagents
+  </Card>
+  <Card title="BYOK" icon="key" href="/verdent-manager/configuration/byok">
+    Use your own API keys
+  </Card>
+  <Card title="Plan Mode" icon="clipboard-list" href="/verdent-manager/advanced-features/plan-mode">
+    Plan before implementing
+  </Card>
+</CardGroup>
